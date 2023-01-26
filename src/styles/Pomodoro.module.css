@@ -1,0 +1,9 @@
+.pomodoro {
+  font-size: 6em;
+}
+
+.message {
+  font-size: 0.5em;
+  min-height: 1.3em;
+  margin-bottom: 0.5em;
+}
