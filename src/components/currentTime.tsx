@@ -1,43 +1,41 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { Time } from "./types";
+import FutureTime from "./futureTime";
 
-interface Time {
-  hour: number;
-  minute: number;
-  month: number;
-  day: number;
-  year: number;
-}
-
-const CurrentTime = (futureTime: number | any) => {
+const CurrentTime = () => {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [currentTime, setCurrentTime] = useState<Time>({
     hour: currentDate.getHours(),
     minute: currentDate.getMinutes(),
+    seconds: currentDate.getSeconds(),
     month: currentDate.getMonth(),
     day: currentDate.getDate(),
     year: currentDate.getFullYear(),
   });
+  const [isRunning, setIsRunning] = useState(true);
 
   function padDisplay(value: number) {
     return value.toString().padStart(2, "0");
   }
 
-  useEffect(() => {
-    let timer = setInterval(() => {
-      setCurrentDate(new Date());
-    }, 1000);
-    return function cleanup() {
-      clearInterval(timer);
-    };
-  }, [currentDate]);
+  function updateDate() {
+    let date = new Date();
+    setCurrentDate(date);
+  }
 
-  useEffect(() => {
+  function updateTime() {
     setCurrentTime({
       ...currentTime,
       hour: currentDate.getHours(),
       minute: currentDate.getMinutes(),
+      seconds: currentDate.getSeconds(),
     });
-  }, [currentDate]);
+  }
+
+  useInterval(() => {
+    updateDate();
+    updateTime();
+  }, 1000);
 
   const monthNames = [
     "January",
@@ -54,6 +52,12 @@ const CurrentTime = (futureTime: number | any) => {
     "December",
   ];
 
+  function handleIsRunningChange(e: {
+    target: { checked: boolean | ((prevState: boolean) => boolean) };
+  }) {
+    setIsRunning(e.target.checked);
+  }
+
   function calcFutureTime(minutesInFuture: number) {
     const startHour = currentTime.hour;
     const startMinute = currentTime.minute;
@@ -67,22 +71,45 @@ const CurrentTime = (futureTime: number | any) => {
     return finishedTime;
   }
 
+  function useInterval(callback: () => void, delay: number) {
+    const savedCallback = useRef();
+
+    useEffect(() => {
+      savedCallback.current = callback;
+    }, [callback]);
+
+    useEffect(() => {
+      function tick() {
+        savedCallback.current();
+      }
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    });
+  }
+
   return (
     <div>
       <p>Current Time:</p>
-
       <h3>{`${monthNames[currentTime?.month]} ${currentTime?.day}, ${
         currentTime?.year
       }`}</h3>
       <h1>{`${padDisplay(currentTime?.hour)}:${padDisplay(
         currentTime?.minute
-      )}`}</h1>
+      )}:${padDisplay(currentTime?.seconds)}`}</h1>
       <h1>{currentDate.toLocaleTimeString()}</h1>
       <br />
+      {/* <input
+        type="checkbox"
+        checked={isRunning}
+        onChange={handleIsRunningChange}
+      />
+      Start Now? */}
       <p>Predicted End Time:</p>
-      <h3>
-        {calcFutureTime(25).hours}:{calcFutureTime(25).minutes}
-      </h3>
+      <FutureTime currentTime={currentTime} />
+      {/* <h3>
+        {padDisplay(calcFutureTime(25).hours)}:
+        {padDisplay(calcFutureTime(25).minutes)}
+      </h3> */}
     </div>
   );
 };
