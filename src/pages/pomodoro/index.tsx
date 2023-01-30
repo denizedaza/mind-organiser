@@ -76,7 +76,7 @@ const Pomodoro = () => {
 
   return (
     <>
-      <CurrentTime futureTime={25} />
+      <CurrentTime />
       <div className={styles.pomodoro}>
         <div className={styles.message}>
           {timer.isBreak && <div>Break time! New Session starts in: </div>}
