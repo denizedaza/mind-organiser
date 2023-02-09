@@ -13,6 +13,7 @@ const CurrentTime = () => {
     day: currentDate.getDate(),
     year: currentDate.getFullYear(),
   });
+  const [isTimeOn, setIsTimeOn] = useState<Boolean>(true);
 
   useInterval(() => {
     function updateDate() {
@@ -78,7 +79,7 @@ const CurrentTime = () => {
       </h1>
       <h1>currentDate obj- {currentDate.toLocaleTimeString()}</h1>
       <br />
-      <FutureTime currentTime={currentTime} displayCallback={padDisplay} />
+      <FutureTime currentTime={currentTime} />
     </div>
   );
 };
