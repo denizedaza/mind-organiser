@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import CurrentTime from "@/components/currentTime";
 import styles from "@/styles/Pomodoro.module.css";
 import { PomoTimer } from "./types";
+import { padDisplay } from "@/utils";
 
 const Pomodoro = () => {
-  // const [minutes, setMinutes] = useState(25);
-  // const [seconds, setSeconds] = useState(0);
   const [timer, setTimer] = useState<PomoTimer>({
     minutes: 25,
     seconds: 0,
@@ -14,13 +13,19 @@ const Pomodoro = () => {
   });
   // const [displayMessage, setDisplayMessage] = useState(false); // if true, then timer is in "break"
 
-  const displayMinutes = timer.minutes.toString().padStart(2, "0");
-  const displaySeconds = timer.seconds.toString().padStart(2, "0");
-
   //TODO: pause, play, stop buttons + functionalities
   // useEffect(() => {
   // }, [timer.seconds]);
   let interval: NodeJS.Timer;
+
+  useEffect(() => {
+    if (!timer.isPaused) {
+      startTimer();
+    } else {
+      stopTimer();
+    }
+    return () => clearInterval(interval);
+  }, [timer.isPaused]);
 
   function startTimer() {
     console.log("start timer was pressed!!");
@@ -76,7 +81,7 @@ const Pomodoro = () => {
           {timer.isBreak && <div>Break time! New Session starts in: </div>}
         </div>
         <div className={styles.timer}>
-          {displayMinutes}:{displaySeconds}
+          {padDisplay(timer.minutes)}:{padDisplay(timer.seconds)}
         </div>
         <div className={styles.controlPanel}>
           <button>PAUSE</button>

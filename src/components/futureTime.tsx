@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { Time } from "./types";
+import { padDisplay } from "@/utils";
 
-const FutureTime = (props: {
-  currentTime: Time;
-  displayCallback: Function;
-}) => {
-  const { currentTime, displayCallback } = props;
+const FutureTime = (props: { currentTime: Time }) => {
+  const { currentTime } = props;
   const [hasStarted, setHasStarted] = useState(false); //if future clock has started
 
   function handleHasStartedChange(e: {
@@ -28,9 +26,9 @@ const FutureTime = (props: {
     return finishedTime;
   }
 
-  const displayTime = `${displayCallback(
-    calcFutureTime(25).hours
-  )}:${displayCallback(calcFutureTime(25).minutes)}`;
+  const displayTime = `${padDisplay(calcFutureTime(25).hours)}:${padDisplay(
+    calcFutureTime(25).minutes
+  )}`;
 
   return (
     <>
